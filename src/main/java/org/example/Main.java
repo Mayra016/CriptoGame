@@ -24,7 +24,7 @@ public class Main {
 
         }
         System.out.println(sum2);
-        System.out.println(party.total_sum);
+        System.out.println(party.vocals_sum);
         System.out.println("Hola");
         System.out.println("Hello world!");
     }

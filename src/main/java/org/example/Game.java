@@ -1,10 +1,17 @@
 package org.example;
-import com.sun.source.tree.SwitchExpressionTree;
-import java.util.ArrayList;
+
+//import org.apache.poi.ss.usermodel.FileInputStream;
+//import org.apache.poi.ss.usermodel.Sheet;
+//import org.apache.poi.ss.usermodel.Workbook;
+//import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+//package org.apache.poi.ss.usermodel;
+//import java.io.File;
 import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Random;
+//import java.io.FileInputStream;
+
+
 
 public class Game {
     final String word;
@@ -27,18 +34,32 @@ public class Game {
     Hashtable<Character, Integer> active_note = new Hashtable<>(); // Contains the value reference for this party
 
     public Game() {
-        this.word = "table";
+        this.word = "table";//getWord();//"table";
         this.data_basis = setData();
+        this.active_note = getActive_note();
         this.vocals_sum = getVocals_sum();
         this.total_sum = getTotal_sum();
         this.consonants_sum = getConsonants_num();
-        this.active_note = getActive_note();
         this.underscores = getUnderscores();
         this.firstLetter = this.word.charAt(0);
         this.thirdLetter = this.word.charAt(2);
         this.lastLetter = this.word.charAt(this.word.length()-1);
     }
+/*
+    private String getWord() {
+        String path = "src/main/resources/CodeGame 22.07.xlsx";
+        File file = new File(path);
+        FileInputStream inp = new FileInputStream(path);
+        Workbook workbook = new XSSFWorkbook(FileInputStream);
+        Sheet sheet = workbook.getSheetAt(0);
+        int rowCount = sheet.getLastRowNum();
+        Random generator = new Random();
+        int level = generator.nextInt(0, rowCount);
+        String wordCell = sheet.getRow(level).getCell(1).getStringCellValue();
 
+        return wordCell;
+    }
+*/
     private boolean setData() {
         Character[] alphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S',
                 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
@@ -80,49 +101,32 @@ public class Game {
         Integer sum2 = 0;
         Integer value2 = 0;
         Integer response = 0;
-        String message = "__";
         for (int i = 0; i <= (this.word.length() - 1); i++) {
             Character letter2 = Character.valueOf(this.word.toUpperCase().charAt(i));
-            /*
+
             if (this.active_note.get(letter2).equals(0) || this.active_note.get(letter2).equals(null)){
                 continue;
             }
             else {
                 value2 = this.active_note.get(letter2).intValue();
                 sum2 = sum2 + value2;
-            }*/
-
-            try {
-
-                response = this.active_note.get(letter2);
-                if (response.equals(0) || response.equals(null)){
-                }
-                else {
-                    sum2 = sum2 + response;
-                }
-
-            }
-            catch (Exception e){
-                message = " Catch";
-
-                System.out.print(e);
-
             }
 
         }
 
-        return "The sum of all letters is " + sum2 + message;
+        return "The sum of all letters is " + sum2;
     }
 
     // Compare each character of the word with the table and sum the vocals.
     public String getVocals_sum() {
-        int sum3 = 0;
+        Integer sum3 = 0;
+        Integer value3 = 0;
         Character[] vocals_list = {'A', 'E', 'I', 'O', 'U'};
         for (int i = 0; i <= (this.word.length() - 1); i++) {
-            Character letter3 = Character.valueOf(this.word.charAt(i));
+            Character letter3 = Character.valueOf(this.word.toUpperCase().charAt(i));
             boolean test = Arrays.asList(vocals_list).contains(letter3);
             if (test) {
-                int value3 = this.active_note.get(Character.toUpperCase(letter3)).intValue();
+                value3 = this.active_note.get(Character.toUpperCase(letter3));
                 sum3 = sum3 + value3;
                 System.out.println("sum3" + Integer.toString(sum3));
                 System.out.println("value3" + Integer.toString(value3));
@@ -131,7 +135,7 @@ public class Game {
 
         }
 
-        return "Vocals sum is equals "+ Integer.toString(sum3);
+        return "Vocals sum is equals "+ sum3;
     }
 
     // Get the numbers of underscores needed to write the word
@@ -177,7 +181,7 @@ public class Game {
         for (int i = 0; i <= (this.word.length() - 1); i++) {
             Character letter = this.word.toUpperCase().charAt(i);
             boolean test = Arrays.asList(vocals).contains(letter);
-            if (test = false) {
+            if (test == false) {
                 int value = this.active_note.get(letter);
                 sum1 = sum1 + value;
             }
