@@ -1,22 +1,39 @@
 package org.example;
 
-import org.apache.poi.ss.formula.atp.Switch;
+//import org.apache.poi.ss.formula.atp.Switch;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import java.io.File;
+//import java.io.File;
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+//import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Random;
-import org.apache.poi.ss.usermodel.*;
-import java.io.FileInputStream;
+//import org.apache.poi.ss.usermodel.*;
+//import java.io.FileInputStream;
 
 
 
-public class Game {
+public class Game extends Settings {
+    // WINDOW SETTINGS
+    /*
+    private static final long serialVersionUID = 1L;
+    private static final int WIDTH = 1080;
+    private static final int HEIGHT = 1920;
+
+    private static final String name = "CriptoGame";
+    private static int aps = 0;
+    private static int fps = 0;
+
+    private static JFrame window;
+    boolean isRunning;*/
+
+
+    // GAME LOGIC
     final String word;
     String total_sum;
     String vocals_sum;
@@ -27,6 +44,8 @@ public class Game {
     final Character lastLetter;
     boolean data_basis;
 
+    String lang = "ES";
+
     // Possible notes to select randomly each party
     Hashtable<Character, Integer> note1 = new Hashtable<>();
     Hashtable<Character, Integer> note2 = new Hashtable<>();
@@ -36,7 +55,18 @@ public class Game {
     String normal_word;
     Hashtable<Character, Integer> active_note = new Hashtable<>(); // Contains the value reference for this party
 
-    public Game() {
+    public Game() {/*
+        // WINDOW INITIALIZE
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        window = new JFrame(this.name);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setResizable(false);
+        window.setLayout(new BorderLayout());
+        window.pack();
+        window.setLocationRelativeTo(null);
+        window.setVisible(true);*/
+
+        // GAME LOGIC
         this.word = getWord();
         System.out.println(this.word);
         this.normal_word = getNormalize(this.word);
@@ -93,7 +123,7 @@ public class Game {
             Sheet sheet = workbook.getSheetAt(0);
             Random generator = new Random();
             int level = generator.nextInt(0, 100);
-            wordCell = sheet.getRow(14).getCell(0).getStringCellValue();
+            wordCell = sheet.getRow(level).getCell(0).getStringCellValue();
             //cellValue = new String(wordCell.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
 
         } catch (IOException e) {
@@ -163,6 +193,7 @@ public class Game {
     public String getVocals_sum() {
         Integer sum3 = 0;
         Integer value3 = 0;
+        Character vocal_exception = this.normal_word.toUpperCase().charAt(this.normal_word.length() - 1);
         Character[] vocals_list = {'A', 'E', 'I', 'O', 'U'};
         for (int i = 0; i <= (this.normal_word.length() - 1); i++) {
             Character letter3 = Character.valueOf(this.normal_word.toUpperCase().charAt(i));
@@ -173,6 +204,10 @@ public class Game {
                 System.out.println("sum3" + Integer.toString(sum3));
                 System.out.println("value3" + Integer.toString(value3));
 
+            }
+            if (vocal_exception == 'Y' && this.lang == "ES"){
+                value3 = this.active_note.get(vocal_exception);
+                sum3 = sum3 + value3;
             }
 
         }

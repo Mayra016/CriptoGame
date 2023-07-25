@@ -45,8 +45,6 @@
             <artifactId>log4j-core</artifactId>
             <version>2.20.0</version> <!-- Reemplaza la versión con la última disponible -->
         </dependency>
-
-
     </dependencies>
 
 </project>
