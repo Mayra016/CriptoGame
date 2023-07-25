@@ -5,19 +5,20 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 //import java.io.File;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 //import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.Random;
+import java.net.URL;
+import java.util.*;
 //import org.apache.poi.ss.usermodel.*;
 //import java.io.FileInputStream;
 
 
-
+@SuppressWarnings("ALL")
 public class Game extends Settings {
     // WINDOW SETTINGS
     /*
@@ -35,9 +36,9 @@ public class Game extends Settings {
 
     // GAME LOGIC
     final String word;
-    String total_sum;
-    String vocals_sum;
-    String consonants_sum;
+    private String total_sum;
+    private String vocals_sum;
+    private String consonants_sum;
     final String underscores;
     final Character firstLetter;
     final Character thirdLetter;
@@ -54,7 +55,11 @@ public class Game extends Settings {
     Hashtable<Character, Integer> note5 = new Hashtable<>();
     String normal_word;
     Hashtable<Character, Integer> active_note = new Hashtable<>(); // Contains the value reference for this party
-
+    Image background;
+    BufferedImage note_img;
+   // private Map<String, Font> customFonts = new HashMap<>();
+   // public Font cluesFont = loadCustomFont("wordFont", "/fonts/CourierPrime-Bold.tff");
+  //  public Font wordFont = loadCustomFont("wordFont", "/fonts/CourierPrime-Regular.tff");
     public Game() {/*
         // WINDOW INITIALIZE
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -67,45 +72,60 @@ public class Game extends Settings {
         window.setVisible(true);*/
 
         // GAME LOGIC
+
         this.word = getWord();
         System.out.println(this.word);
         this.normal_word = getNormalize(this.word);
         System.out.println(normal_word);
         this.data_basis = setData();
         this.active_note = getActive_note();
+        this.note_img = getNote_img();
         this.vocals_sum = getVocals_sum();
+        System.out.println(note_img);
         this.total_sum = getTotal_sum();
         this.consonants_sum = getConsonants_num();
         this.underscores = getUnderscores();
         this.firstLetter = this.word.charAt(0);
         this.thirdLetter = this.word.charAt(2);
-        this.lastLetter = this.word.charAt(this.word.length()-1);
+        this.lastLetter = this.word.charAt(this.word.length() - 1);
+    }
+
+    private BufferedImage getNote_img() {
+        if (this.active_note == note1) {
+            note_img = LoadImage("/TABLA1 VF.png");
+        } else if (this.active_note == note2) {
+            note_img = LoadImage("/TABLA2 VF.png");
+        } else if (this.active_note == note3) {
+            note_img = LoadImage("/TABLA3 VF.png");
+        } else if (this.active_note == note4) {
+            note_img = LoadImage("/TABLA4 VF.png");
+        } else if (this.active_note == note5) {
+            note_img = LoadImage("/TABLA5 VF.png");
+        }
+
+
+        return note_img;
     }
 
     // Replace special character with the simple version
     private String getNormalize(String word) {
-        Character[] replacements = {'Á', 'É','Í', 'Ó', 'Ú', 'Ã', 'Õ', 'Ü', 'Ç'};
+        Character[] replacements = {'Á', 'É', 'Í', 'Ó', 'Ú', 'Ã', 'Õ', 'Ü', 'Ç'};
         String normalizedWord = "";
-        for (int i = 0; i <= this.word.length() - 1; i++){
+        for (int i = 0; i <= this.word.length() - 1; i++) {
             Character letter5 = this.word.toUpperCase().charAt(i);
             boolean test2 = Arrays.asList(replacements).contains(letter5);
-            if (test2){
+            if (test2) {
                 if (letter5 == 'Á' || letter5 == 'Ã') {
                     letter5 = 'A';
-                }
-                else if (letter5 == 'É') {
+                } else if (letter5 == 'É') {
                     letter5 = 'E';
-                }
-                else if (letter5 == 'Í') {
+                } else if (letter5 == 'Í') {
                     letter5 = 'I';
-                }
-                else if (letter5 == 'Ó' || letter5 == 'Õ') {
+                } else if (letter5 == 'Ó' || letter5 == 'Õ') {
                     letter5 = 'O';
-                }
-                else if (letter5 == 'Ú' || letter5 == 'Ü') {
+                } else if (letter5 == 'Ú' || letter5 == 'Ü') {
                     letter5 = 'U';
-                }
-                else if (letter5 == 'Ç') {
+                } else if (letter5 == 'Ç') {
                     letter5 = 'C';
                 }
             }
@@ -176,10 +196,9 @@ public class Game extends Settings {
         for (int i = 0; i <= (this.normal_word.length() - 1); i++) {
             Character letter2 = Character.valueOf(this.normal_word.toUpperCase().charAt(i));
 
-            if (this.active_note.get(letter2).equals(0) || this.active_note.get(letter2).equals(null)){
+            if (this.active_note.get(letter2).equals(0) || this.active_note.get(letter2).equals(null)) {
                 continue;
-            }
-            else {
+            } else {
                 value2 = this.active_note.get(letter2).intValue();
                 sum2 = sum2 + value2;
             }
@@ -205,14 +224,14 @@ public class Game extends Settings {
                 System.out.println("value3" + Integer.toString(value3));
 
             }
-            if (vocal_exception == 'Y' && this.lang == "ES"){
+            if (vocal_exception == 'Y' && this.lang == "ES") {
                 value3 = this.active_note.get(vocal_exception);
                 sum3 = sum3 + value3;
             }
 
         }
 
-        return "Vocals sum is equals "+ sum3;
+        return "Vocals sum is equals " + sum3;
     }
 
     // Get the numbers of underscores needed to write the word
@@ -223,8 +242,7 @@ public class Game extends Settings {
         for (int i = 0; i <= length_word; i++) {
             if (i == 0) {
                 underscore = "_";
-            }
-            else {
+            } else {
                 underscore = underscore.concat(Character.toString(under));
             }
         }
@@ -238,14 +256,11 @@ public class Game extends Settings {
 
         if (index == 0) {
             this.active_note = note1;
-        }
-        else if (index == 1) {
+        } else if (index == 1) {
             this.active_note = note2;
-        }
-        else if (index == 2) {
+        } else if (index == 2) {
             this.active_note = note3;
-        }
-        else {
+        } else {
             this.active_note = note4;
         }
         return this.active_note;
@@ -265,5 +280,124 @@ public class Game extends Settings {
         }
 
         return "The consonants sum " + sum1;
+    }
+
+    private static BufferedImage background2 = new BufferedImage(526, 828, BufferedImage.TYPE_INT_RGB);
+
+    public void draw(Graphics g) {
+        super.paint(g);
+        Image background = new ImageIcon(
+                getClass().getResource("src/main/java/org/example/graphics/background.png")
+        ).getImage();
+
+
+    }
+
+    private BufferedImage LoadImage(String Direccion) {
+        try {
+            URL RutaImagen = getClass().getResource(Direccion);
+            BufferedImage image = ImageIO.read(RutaImagen);
+            return image;
+        } catch (Exception e) {
+            System.out.println("Problemas en carga de archivo");
+            return null;
+        }
+    }
+    // Load font .tff
+    /*
+    private Font loadCustomFont(String fontName, String fontPath) {
+        Font customFont = null;
+        try {
+            InputStream fontStream = getClass().getResourceAsStream(fontPath);
+            customFont = Font.createFont(Font.TRUETYPE_FONT, fontStream);
+            if (fontName == "wordFont"){
+                customFont = customFont.deriveFont(24f);
+            }
+            else {
+                customFont = customFont.deriveFont(12f);
+            }
+
+
+            // Almacenar la fuente personalizada en el mapa
+            customFonts.put(fontName, customFont);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println( "Catch exceptio loadCustomFont " + e);
+        } catch (FontFormatException e) {
+            e.printStackTrace();
+        }
+        return customFont;
+    }*/
+
+
+
+
+    public void paint(Graphics g) {
+        // CLUES
+        //Font fuente2 = Font.getFont("/fonts/CourierPrime-Bold.tff");
+        //Font wordFont = new Font("/fonts/CourierPrime-Bold.tff", Font.BOLD, 24);
+        //Font cluesFont2 = new Font("/fonts/CourierPrime-Regular.tff", Font.PLAIN, 16);
+        /*
+        System.out.println(cluesFont2);
+        System.out.println(wordFont);
+        if (this.total_sum == null){
+            g.setFont(cluesFont2);
+            this.total_sum = getTotal_sum();
+            g.drawString(this.total_sum, 100, 130);
+        }
+        else{
+            g.drawString(this.total_sum, 100, 130);
+        }
+        if (this.vocals_sum == null){
+            g.setFont(cluesFont2);
+            this.vocals_sum = getVocals_sum();
+            g.drawString(this.vocals_sum, 100, 40);
+        }
+        else{
+            g.drawString(this.vocals_sum, 100, 40);
+        }
+        if (this.consonants_sum == null){
+            g.setFont(cluesFont2);
+            this.consonants_sum = getConsonants_num();
+            g.drawString(this.consonants_sum, 71, 60);
+        }
+        else{
+            g.drawString(this.consonants_sum, 71, 60);
+        }
+        */
+
+        // If the image isn't loaded, this function will load it
+        if (background == null) {
+            background = LoadImage("/background.png");
+            g.drawImage(background, -250, 0, this);
+        }
+        else{
+            g.drawImage(background, -250, 0, this);
+        }
+        if (this.active_note == note1) {
+            note_img = LoadImage("/TABLA1 VF.png");
+        } else if (this.active_note == note2) {
+            note_img = LoadImage("/TABLA2 VF.png");
+        } else if (this.active_note == note3) {
+            note_img = LoadImage("/TABLA3 VF.png");
+        } else if (this.active_note == note4) {
+            note_img = LoadImage("/TABLA4 VF.png");
+        } else if (this.active_note == note5) {
+            note_img = LoadImage("/TABLA5 VF.png");
+        }
+        if (note_img == null) {
+            if (active_note == null){
+                active_note = getActive_note();
+            }
+            note_img = getNote_img();
+            g.drawImage(note_img, 100, 130, 320, 520, null);
+        }
+        if (note_img != null) {
+            g.drawImage(note_img, 100, 130, 320, 520, null);
+        }
+
+
+        //g.drawImage(note_img, 0, 300, this);
+
     }
 }
