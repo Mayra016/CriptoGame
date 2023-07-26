@@ -8,6 +8,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,15 +36,19 @@ public class Game extends Settings {
 
 
     // GAME LOGIC
-    final String word;
+    String word;
     private String total_sum;
     private String vocals_sum;
     private String consonants_sum;
-    final String underscores;
+    String underscores;
     final Character firstLetter;
     final Character thirdLetter;
     final Character lastLetter;
     boolean data_basis;
+    private static final int WIDTH = 526;
+    private static final int HEIGHT = 828;
+
+
 
     String lang = "ES";
 
@@ -54,26 +59,20 @@ public class Game extends Settings {
     Hashtable<Character, Integer> note4 = new Hashtable<>();
     Hashtable<Character, Integer> note5 = new Hashtable<>();
     String normal_word;
+    String spaced_word;
     Hashtable<Character, Integer> active_note = new Hashtable<>(); // Contains the value reference for this party
     Image background;
     BufferedImage note_img;
+    Color BLUE_TEXT = new Color(131, 244, 248, 190);
+
    // private Map<String, Font> customFonts = new HashMap<>();
    // public Font cluesFont = loadCustomFont("wordFont", "/fonts/CourierPrime-Bold.tff");
   //  public Font wordFont = loadCustomFont("wordFont", "/fonts/CourierPrime-Regular.tff");
-    public Game() {/*
-        // WINDOW INITIALIZE
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        window = new JFrame(this.name);
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setResizable(false);
-        window.setLayout(new BorderLayout());
-        window.pack();
-        window.setLocationRelativeTo(null);
-        window.setVisible(true);*/
+    public Game() {
 
         // GAME LOGIC
-
         this.word = getWord();
+        this.spaced_word = getSpaces(this.word);
         System.out.println(this.word);
         this.normal_word = getNormalize(this.word);
         System.out.println(normal_word);
@@ -88,6 +87,17 @@ public class Game extends Settings {
         this.firstLetter = this.word.charAt(0);
         this.thirdLetter = this.word.charAt(2);
         this.lastLetter = this.word.charAt(this.word.length() - 1);
+    }
+
+    private String getSpaces(String text1) {
+        int length1 = text1.length() - 1;
+        String spaced_word = "";
+        for(int i = 0; i <= length1; i++){
+            Character letter7 = text1.toUpperCase().charAt(i);
+            String letter_space = Character.toString(letter7).concat(" ");
+            spaced_word = spaced_word.concat(letter_space);
+        }
+        return spaced_word;
     }
 
     private BufferedImage getNote_img() {
@@ -238,12 +248,13 @@ public class Game extends Settings {
     private String getUnderscores() {
         int length_word = this.word.length() - 1;
         String underscore = new String();
-        char under = '_';
+        String under = "_ ";
         for (int i = 0; i <= length_word; i++) {
             if (i == 0) {
-                underscore = "_";
-            } else {
-                underscore = underscore.concat(Character.toString(under));
+                underscore = "_ ";
+            }
+            else {
+                underscore = underscore.concat(under);
             }
         }
         return underscore;
@@ -334,38 +345,20 @@ public class Game extends Settings {
 
     public void paint(Graphics g) {
         // CLUES
-        //Font fuente2 = Font.getFont("/fonts/CourierPrime-Bold.tff");
-        //Font wordFont = new Font("/fonts/CourierPrime-Bold.tff", Font.BOLD, 24);
-        //Font cluesFont2 = new Font("/fonts/CourierPrime-Regular.tff", Font.PLAIN, 16);
+        Font clueFont = new Font("Courier New", Font.PLAIN, 18);
+        Font wordFont = new Font("Courier New", Font.BOLD, 28);
+        Font underFont = new Font("Courier New", Font.BOLD, 28);
+        FontMetrics fontMetrics = g.getFontMetrics();
+
         /*
-        System.out.println(cluesFont2);
-        System.out.println(wordFont);
-        if (this.total_sum == null){
-            g.setFont(cluesFont2);
-            this.total_sum = getTotal_sum();
-            g.drawString(this.total_sum, 100, 130);
-        }
-        else{
-            g.drawString(this.total_sum, 100, 130);
-        }
-        if (this.vocals_sum == null){
-            g.setFont(cluesFont2);
-            this.vocals_sum = getVocals_sum();
-            g.drawString(this.vocals_sum, 100, 40);
-        }
-        else{
-            g.drawString(this.vocals_sum, 100, 40);
-        }
-        if (this.consonants_sum == null){
-            g.setFont(cluesFont2);
-            this.consonants_sum = getConsonants_num();
-            g.drawString(this.consonants_sum, 71, 60);
-        }
-        else{
-            g.drawString(this.consonants_sum, 71, 60);
-        }
+        Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>();
+        attributes.put(TextAttribute.TRACKING, 2);
+        Font font3 = wordFont.deriveFont(attributes);
         */
 
+        int underscoresWidth = fontMetrics.stringWidth(underscores);
+        int UNDERSCORE_X = (WIDTH / 2) - (underscoresWidth / 2) - 40;
+        run();
         // If the image isn't loaded, this function will load it
         if (background == null) {
             background = LoadImage("/background.png");
@@ -396,6 +389,79 @@ public class Game extends Settings {
             g.drawImage(note_img, 100, 130, 320, 520, null);
         }
 
+
+        if (total_sum == null){
+            total_sum = this.total_sum;
+
+            g.setFont(clueFont);
+            g.setColor(BLUE_TEXT);
+            g.drawString(total_sum, 51, 340);
+        }
+        else{
+            g.setFont(clueFont);
+            g.setColor(BLUE_TEXT);
+            g.drawString(total_sum, 51, 340);
+        }
+        if (vocals_sum == null){
+            vocals_sum = this.vocals_sum;
+            g.setFont(clueFont);
+            g.setColor(BLUE_TEXT);
+            g.drawString(vocals_sum, 51, 370);
+        }
+        else{
+            g.setFont(clueFont);
+            g.setColor(BLUE_TEXT);
+            g.drawString(vocals_sum, 51, 370);
+        }
+        if (consonants_sum == null){
+            consonants_sum = this.consonants_sum;
+            g.setFont(clueFont);
+            g.setColor(BLUE_TEXT);
+            g.drawString(consonants_sum, 51, 400);
+        }
+        else{
+            g.setFont(clueFont);
+            g.setColor(BLUE_TEXT);
+            g.drawString(consonants_sum, 51, 400);
+        }
+        /*
+
+
+         */
+
+        if (underscores == null) {
+            underscores = this.underscores;
+            g.setFont(underFont);
+            int textWidth = fontMetrics.stringWidth(underscores);
+            int centerX = (540 - textWidth) / 2;
+            g.setColor(BLUE_TEXT);
+            g.drawString(underscores, UNDERSCORE_X - 20, 280);
+        }
+        else{
+
+            g.setFont(underFont);
+            g.setFont(underFont);
+            int textWidth = fontMetrics.stringWidth(underscores);
+            int centerX = (540 - textWidth) / 2;
+            g.setColor(BLUE_TEXT);
+            g.drawString(underscores, UNDERSCORE_X - 20, 280);
+        }
+        if (spaced_word == null) {
+            spaced_word = this.spaced_word;
+            g.setFont(wordFont);
+            g.setColor(BLUE_TEXT);
+            g.drawString(spaced_word.toUpperCase(), UNDERSCORE_X - 20, 275);
+        }
+        else{/*
+            Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>();
+            attributes.put(TextAttribute.TRACKING, 0.4);
+            Font font2 = wordFont.deriveFont(attributes);
+            */
+            g.setFont(wordFont);
+            g.setColor(BLUE_TEXT);
+            g.drawString(spaced_word.toUpperCase(), UNDERSCORE_X - 20, 275);
+        }
+        System.out.println(spaced_word);
 
         //g.drawImage(note_img, 0, 300, this);
 

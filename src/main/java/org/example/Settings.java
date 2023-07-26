@@ -27,6 +27,7 @@ public class Settings extends Canvas implements Runnable{
         window.setLocationRelativeTo(null);
         window.setVisible(true);
 
+
     }
 
 
@@ -78,7 +79,8 @@ public class Settings extends Canvas implements Runnable{
         fps++;
     }
 
-    private void refresh(){
+    public void refresh(){
         aps++;
+        repaint();
     }
 }

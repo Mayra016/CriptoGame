@@ -24,7 +24,7 @@ public class Main {
 
         }
         System.out.println(party.word);
-        System.out.println(party.normal_word);
+        System.out.println(party.spaced_word);
         System.out.println("Hola");
         System.out.println("Hello world!");
     }
